@@ -1,364 +1,450 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<meta charset="UTF-8" />
+<title>HR Payroll System</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>كشف المرتبات</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Cairo',sans-serif;
-}
-
 body{
-background:#f5f7fb;
-}
-
-.header{
-background:linear-gradient(135deg,#1d4ed8,#2563eb);
-color:white;
-padding:25px;
-text-align:center;
-font-size:28px;
-font-weight:700;
+  font-family: Helvetica ;
+  background:#eef2f7;
+  padding:20px;
 }
 
 .container{
-max-width:1300px;
-margin:auto;
-padding:20px;
+  max-width:900px;
+  margin:auto;
 }
 
+/* ================= SEARCH DROPDOWN ================= */
 .filters{
-display:flex;
-gap:15px;
-flex-wrap:wrap;
-margin-bottom:20px;
+  display:flex;
+  gap:10px;
+  margin-bottom:15px;
 }
 
-select{
-padding:12px;
-border-radius:10px;
-border:1px solid #ddd;
-min-width:250px;
-font-size:15px;
-background:white;
+
+.dropdown{
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  background:white;
+  border:1px solid #e5e7eb;
+  border-radius:8px;
+  max-height:200px;
+  overflow-y:auto;
+  display:none;
+  z-index:10;
 }
 
-.cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:15px;
-margin-bottom:20px;
+.dropdown div{
+  padding:10px;
+  cursor:pointer;
 }
 
+.dropdown div:hover{
+  background:#f3f4f6;
+}
+
+/* ================= CARD ================= */
 .card{
-background:white;
-padding:20px;
-border-radius:15px;
-box-shadow:0 3px 15px rgba(0,0,0,.08);
+  width:10cm;
+  margin:auto;
+  background:#fff;
+  border-radius:16px;
+  padding:20px;
+  border:1px solid #e5e7eb;
+  box-shadow:0 15px 40px rgba(0,0,0,0.08);
 }
 
-.card-title{
-font-size:14px;
-color:#666;
+.header{
+  text-align:center;
+  border-bottom:1px solid #eee;
+  padding-bottom:10px;
+  margin-bottom:10px;
+}
+.filters{
+  display:flex;
+  gap:15px;
+  justify-content:center;
+  margin-bottom:15px;
 }
 
-.card-value{
-font-size:28px;
-font-weight:700;
-margin-top:10px;
+.btn-box{
+  position:relative;
+  width:200px;
 }
 
-.green{
-color:#059669;
+.big-btn{
+  width:100%;
+  padding:14px;
+  font-size:14px;
+  font-weight:800;
+  border:none;
+  border-radius:12px;
+  background:#1d4ed8;
+  color:white;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(0,0,0,0.1);
 }
 
-.blue{
-color:#2563eb;
+.menu{
+  position:absolute;
+  top:110%;
+  left:0;
+  right:0;
+  background:white;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  max-height:none;
+  overflow-y:auto;
+  display:none;
+  z-index:10;
 }
 
-.orange{
-color:#ea580c;
+.menu div{
+  padding:10px;
+  cursor:pointer;
+  font-weight:600;
 }
 
-.table-box{
-background:white;
-padding:20px;
-border-radius:15px;
-box-shadow:0 3px 15px rgba(0,0,0,.08);
+.menu div:hover{
+  background:#f3f4f6;
+}
+.company{
+  font-size:20px;
+  font-weight:900;
 }
 
-table{
-width:100%;
-border-collapse:collapse;
+/* ================= ROW ================= */
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:6px 0;
+  border-bottom:1px solid #f1f1f1;
 }
 
-th,td{
-padding:12px;
-border:1px solid #eee;
-text-align:center;
+.label{
+  color:#000;
+  font-weight:800;
+  font-size:20px;
 }
 
-th{
-background:#f8fafc;
+.value{
+  color:#000;
+  text-align: center;
+  font-weight:800;
+  font-size:20px;
 }
 
+/* ================= NET ================= */
+.net{
+  margin-top:12px;
+  padding:12px;
+  background:#1d4ed8;
+  color:white;
+  font-weight:900;
+  border-radius:10px;
+  text-align:center;
+}
+
+/* ================= ACTIONS ================= */
 .actions{
-margin-top:20px;
+  display:flex;
+  gap:10px;
+  margin-top:15px;
 }
 
 button{
-background:#2563eb;
-color:white;
-border:none;
-padding:12px 20px;
-border-radius:10px;
-cursor:pointer;
-font-size:15px;
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:#1d4ed8;
+  color:white;
+  font-weight:700;
+  cursor:pointer;
 }
 
-button:hover{
-opacity:.9;
-}
-
-#dashboard{
-display:none;
-}
-
-</style>
-
+}</style>
 </head>
 
 <body>
 
-<div class="header">
-كشف مرتبات الموظفين
-</div>
-
 <div class="container">
 
+<!-- FILTERS -->
 <div class="filters">
 
-<select id="branch">
-<option>اختر الفرع</option>
-</select>
+  <div class="btn-box">
+    <button id="branchBtn" class="big-btn">اختر الفرع</button>
+    <div id="branchMenu" class="menu"></div>
+  </div>
 
-<select id="employee">
-<option>اختر الموظف</option>
-</select>
+  <div class="btn-box">
+    <button id="empBtn" class="big-btn">اختر الموظف</button>
+    <div id="empMenu" class="menu"></div>
+  </div>
 
-</div>
-
-<div id="dashboard">
-
-<div class="cards">
-
-<div class="card">
-<div class="card-title">المرتب</div>
-<div class="card-value blue" id="salary"></div>
-</div>
-
-<div class="card">
-<div class="card-title">صافي المرتب</div>
-<div class="card-value green" id="netSalary"></div>
-</div>
-
-<div class="card">
-<div class="card-title">الحافز</div>
-<div class="card-value orange" id="bonus"></div>
-</div>
-
-<div class="card">
-<div class="card-title">الإجمالي</div>
-<div class="card-value blue" id="total"></div>
-</div>
 
 </div>
+<!-- CARD -->
+<div class="card" id="card">
 
-<div class="table-box">
+  <div class="header">
+    <div class="company">نظام الرواتب HR</div>
+    <div style="font-size:12px;color:#777;">Payroll System</div>
+  </div>
 
-<table>
-<tbody id="details"></tbody>
-</table>
+  <div id="content"></div>
+
+  <div class="net" id="netBox">صافي المرتب: 0</div>
+
+  <div class="footer">
+    <div style="font-size:12px;color:#777;">Verified Document</div>
+  </div>
+
+</div>
 
 <div class="actions">
-<button onclick="exportPDF()">
-📄 تحميل PDF
-</button>
-</div>
-
-</div>
-
+  <button onclick="downloadImage()">تحميل JPG</button>
+  <button onclick="window.print()">طباعة PDF</button>
+  <button onclick="shareImage()">مشاركة</button>
 </div>
 
 </div>
 
 <script>
 
-let employees=[];
-let currentEmployee=null;
+const API_URL="https://script.google.com/macros/s/AKfycbxdGxOn1CpsqwQuXQJ8OzIsU-2ewJx9XEE4VL1KSFeUN7gHXs5Dr8XUleZPRxV8sbef/exec";
 
-fetch("https://script.google.com/macros/s/AKfycbxdGxOn1CpsqwQuXQJ8OzIsU-2ewJx9XEE4VL1KSFeUN7gHXs5Dr8XUleZPRxV8sbef/exec")
-.then(r => r.json())
-.then(data => {
+let data=[];
 
-    console.log(data);
-
-    employees = data;
-
-    loadBranches();
-
-})
-.catch(err => {
-
-    console.error(err);
-
-});
-
-function loadBranches(){
-
-const branches=[
-...new Set(
-employees.map(x=>x["الفرع"])
-)
-];
-
-const select=
-document.getElementById("branch");
-
-branches.forEach(branch=>{
-
-const op=
-document.createElement("option");
-
-op.value=branch;
-op.textContent=branch;
-
-select.appendChild(op);
-
-});
-
+/* ================= SAFE FORMAT ================= */
+function format(v){
+  if(v===null||v===undefined||v==="") return 0;
+  if(typeof v==="string") return v;
+  if(isNaN(v)) return v;
+  return Number(v).toLocaleString("en-US");
 }
 
-document.getElementById("branch")
-.addEventListener("change",function(){
+/* ================= STATE ================= */
+let selectedBranch="";
+let selectedEmployee="";
 
-const branch=this.value;
+/* ================= LOAD DATA ================= */
+async function loadData(){
+  const res=await fetch(API_URL);
+  data=await res.json();
 
-const empSelect=
-document.getElementById("employee");
-
-empSelect.innerHTML=
-'<option>اختر الموظف</option>';
-
-employees
-.filter(x=>x["الفرع"]===branch)
-.forEach(emp=>{
-
-empSelect.innerHTML+=
-`<option>${emp["الموظف"]}</option>`;
-
-});
-
-});
-
-document.getElementById("employee")
-.addEventListener("change",function(){
-
-const empName=this.value;
-
-currentEmployee=
-employees.find(x=>
-x["الموظف"]===empName &&
-x["الفرع"]===
-document.getElementById("branch").value
-);
-
-showEmployee();
-
-});
-
-function showEmployee(){
-
-if(!currentEmployee) return;
-document.getElementById("dashboard")
-.style.display="block";
-
-document.getElementById("salary")
-.innerText=currentEmployee["المرتب"] ?? 0;
-
-document.getElementById("netSalary")
-.innerText=currentEmployee["صافى المرتب"] ?? 0;
-
-document.getElementById("bonus")
-.innerText=currentEmployee["حافز"] ?? 0;
-
-document.getElementById("total")
-.innerText=currentEmployee["الاجمالى"] ?? 0;
-
-let html='';
-
-Object.entries(currentEmployee)
-.forEach(([key,val])=>{
-
-html+=`
-<tr>
-<td><b>${key}</b></td>
-<td>${typeof val === "number" ? val.toFixed(2) : val}</td>
-</tr>
-`;
-
-});
-
-document.getElementById("details")
-.innerHTML=html;
-
+  initButtons();
 }
 
-async function exportPDF(){
+/* ================= INIT BUTTONS ================= */
+function initButtons(){
 
-if(!currentEmployee) return;
+  const branches=[...new Set(data.map(x=>x["الفرع"]))];
 
-const { jsPDF } = window.jspdf;
+  const bMenu=document.getElementById("branchMenu");
 
-const pdf=new jsPDF();
+  bMenu.innerHTML=branches.map(b=>
+    `<div onclick="selectBranch('${b}')">${b}</div>`
+  ).join("");
 
-pdf.setFontSize(18);
-pdf.text("Salary Report",20,20);
-
-let y=40;
-
-for(const [k,v] of Object.entries(currentEmployee)){
-
-pdf.setFontSize(11);
-pdf.text(`${k} : ${v}`,20,y);
-
-y+=8;
-
-if(y>270){
-pdf.addPage();
-y=20;
+  updateEmployees();
 }
 
+/* ================= SELECT BRANCH ================= */
+function selectBranch(v){
+  selectedBranch = v;
+
+  document.getElementById("branchBtn").innerText = v;
+  document.getElementById("branchMenu").style.display = "none";
+
+  // ❌ مهم: ممنوع نجيب أول موظف أو نعمل render هنا
+  selectedEmployee = "";
+  document.getElementById("empBtn").innerText = "اختر الموظف";
+
+  updateEmployees();
+
+  
 }
 
-pdf.save(
-`${currentEmployee["الموظف"]}.pdf`
-);
+/* ================= UPDATE EMPLOYEES ================= */
+function updateEmployees(){
 
+  const employees = [...new Set(
+    data
+      .filter(x => !selectedBranch || x["الفرع"] === selectedBranch)
+      .map(x => x["الموظف"])
+  )];
+
+  const empMenu = document.getElementById("empMenu");
+
+  empMenu.innerHTML = employees.map(e =>
+    `<div onclick="selectEmployee('${e}')">${e}</div>`
+  ).join("");
 }
+
+/* ================= SELECT EMPLOYEE ================= */
+function selectEmployee(v){
+  selectedEmployee = v;
+
+  document.getElementById("empBtn").innerText = v;
+  document.getElementById("empMenu").style.display = "none";
+
+  // ✅ العرض فقط هنا
+  render();
+}
+/* ================= VALUES ================= */
+function bVal(){ return selectedBranch; }
+function eVal(){ return selectedEmployee; }
+
+/* ================= MAIN RENDER ================= */
+function render(){
+
+  const row=data.find(x=>
+    (!bVal()||x["الفرع"]===bVal())&&
+    (!eVal()||x["الموظف"]===eVal())
+  );
+
+  if(!row)return;
+
+  document.getElementById("content").innerHTML="";
+
+  if("التحويلات" in row){
+    renderPilot(row);
+  }else{
+    renderEmployee(row);
+  }
+
+  document.getElementById("netBox").innerText=
+    "إجمالي الراتب: "+format(row["الاجمالى"]);
+
+ 
+}
+
+/* ================= EMPLOYEE ================= */
+function renderEmployee(row){
+
+  const fields=[
+    ["الفرع",row["الفرع"]],
+    ["الموظف",row["الموظف"]],
+    ["قيمة الساعة",row["قيمة الساعه"]],
+    ["عدد الساعات",row["عدد الساعات"]],
+    ["عدد الايام",row["عدد الايام"]],
+    ["الاضافي",row["الاضافي"]],
+    ["التاخيرات",row["التاخيرات"]],
+    ["خصم",row["خصم"]],
+    ["صافى الساعات",row["صافى الساعات"]],
+    ["المرتب",row["المرتب"]],
+    ["السلف",row["السلف"]],
+    ["العجز",row["العجز"]],
+    ["تامينات",row["تامينات"]],
+    ["صافى المرتب",row["صافى المرتب"]],
+      ["حافز",row["حافز"]],
+  ];
+
+  let html="";
+  fields.forEach(f=>{
+    html+=`
+      <div class="row">
+        <div class="label">${f[0]}</div>
+        <div class="value">${format(f[1])}</div>
+      </div>
+    `;
+  });
+
+  document.getElementById("content").innerHTML=html;
+}
+
+/* ================= PILOT ================= */
+function renderPilot(row){
+
+  const fields = [
+    ["الفرع", row["الفرع"]],
+    ["الموظف", row["الموظف"]],
+    ["عدد الايام", row["عدد الايام"]],
+    ["عدد الساعات", row["عدد الساعات"]],
+    ["متوسط الساعات", row["متوسط الساعات"]],
+    ["التاخيرات", row["التاخيرات"]],
+    ["خصم", row["خصم"]],
+    ["صافى الساعات", row["صافى الساعات"]],
+    ["المرتب الساعات", row["المرتب الساعات"]],
+    ["التحويلات", row["التحويلات"]],
+    ["قيمة التحويلات", row["قيمة التحويلات"]],
+    ["الاوردرات", row["الاوردرات"]],
+    ["قيمة الاوردرات", row["قيمة الاوردرات"]],
+    ["المرتب", row["المرتب"]],
+    ["السلف", row["السلف"]],
+    ["العجز", row["العجز"]],
+    ["تامينات", row["تامينات"]],
+    ["صافى المرتب", row["صافى المرتب"]],
+    ["حافز", row["حافز"]],
+  ];
+
+  let html = "";
+
+  fields.forEach(f => {
+    html += `
+      <div class="row">
+        <div class="label">${f[0]}</div>
+        <div class="value">${format(f[1])}</div>
+      </div>
+    `;
+  });
+
+  document.getElementById("content").innerHTML = html;
+}
+/* ================= MENU TOGGLE ================= */
+document.getElementById("branchBtn").onclick=()=>{
+  toggle("branchMenu");
+};
+
+document.getElementById("empBtn").onclick=()=>{
+  toggle("empMenu");
+};
+
+function toggle(id){
+  const el=document.getElementById(id);
+  el.style.display = el.style.display==="block" ? "none" : "block";
+}
+
+/* ================= CLOSE OUTSIDE ================= */
+document.addEventListener("click",(e)=>{
+  if(!e.target.closest(".btn-box")){
+    document.querySelectorAll(".menu").forEach(m=>m.style.display="none");
+  }
+});
+
+/* ================= EXPORT ================= */
+function downloadImage(){
+  html2canvas(document.getElementById("card"),{scale:2}).then(c=>{
+    const a=document.createElement("a");
+    a.href=c.toDataURL("image/jpeg");
+    a.download="salary.jpg";
+    a.click();
+  });
+}
+
+function shareImage(){
+  html2canvas(document.getElementById("card"),{scale:2}).then(c=>{
+    c.toBlob(b=>{
+      const f=new File([b],"salary.jpg",{type:"image/jpeg"});
+      if(navigator.canShare&&navigator.canShare({files:[f]})){
+        navigator.share({files:[f]});
+      }
+    });
+  });
+}
+
+/* ================= START ================= */
+loadData();
 
 </script>
 
