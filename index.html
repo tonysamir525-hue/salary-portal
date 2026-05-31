@@ -293,11 +293,20 @@ showEmployee();
 function showEmployee(){
 
 if(!currentEmployee) return;
+document.getElementById("dashboard")
+.style.display="block";
 
-document.getElementById("salary").innerText = Number(currentEmployee["المرتب"] ?? 0).toFixed(2);
-document.getElementById("netSalary").innerText = Number(currentEmployee["صافى المرتب"] ?? 0).toFixed(2);
-document.getElementById("bonus").innerText = Number(currentEmployee["حافز"] ?? 0).toFixed(2);
-document.getElementById("total").innerText = Number(currentEmployee["الاجمالى"] ?? 0).toFixed(2);
+document.getElementById("salary")
+.innerText=currentEmployee["المرتب"] ?? 0;
+
+document.getElementById("netSalary")
+.innerText=currentEmployee["صافى المرتب"] ?? 0;
+
+document.getElementById("bonus")
+.innerText=currentEmployee["حافز"] ?? 0;
+
+document.getElementById("total")
+.innerText=currentEmployee["الاجمالى"] ?? 0;
 
 let html='';
 
