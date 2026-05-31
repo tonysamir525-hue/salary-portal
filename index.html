@@ -15,16 +15,17 @@ body{
 }
 
 .container{
-  max-width:900px;
+  max-width:100%;
   margin:auto;
+  padding:10px;
 }
 
 /* ================= SEARCH DROPDOWN ================= */
 .filters{
-  display:flex;
-  gap:10px;
-  margin-bottom:15px;
+  flex-direction:column;
+  align-items:center;
 }
+
 
 
 .dropdown{
@@ -50,15 +51,16 @@ body{
   background:#f3f4f6;
 }
 
-/* ================= CARD ================= */
+/* CARD = MOBILE WIDTH */
 .card{
-  width:10cm;
+  width:100%;
+  max-width:420px;   /* ده عرض موبايل مثالي */
   margin:auto;
   background:#fff;
   border-radius:16px;
-  padding:20px;
+  padding:16px;
   border:1px solid #e5e7eb;
-  box-shadow:0 15px 40px rgba(0,0,0,0.08);
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
 }
 
 .header{
@@ -75,8 +77,8 @@ body{
 }
 
 .btn-box{
-  position:relative;
-  width:200px;
+  width:100%;
+  max-width:420px;
 }
 
 .big-btn{
@@ -120,26 +122,28 @@ body{
   font-weight:900;
 }
 
-/* ================= ROW ================= */
+/* ROW = VERTICAL STYLE (مش أفقي قوي) */
 .row{
   display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:6px 0;
+  flex-direction:column;   /* مهم جدًا */
+  align-items:flex-start;
+  gap:4px;
+  padding:10px 0;
   border-bottom:1px solid #f1f1f1;
 }
-
+/* LABEL */
 .label{
   color:#000;
-  font-weight:800;
-  font-size:20px;
+  font-weight:700;
+  font-size:14px;
 }
 
+
+/* VALUE */
 .value{
   color:#000;
-  text-align: center;
-  font-weight:800;
-  font-size:20px;
+  font-weight:900;
+  font-size:16px;
 }
 
 /* ================= NET ================= */
