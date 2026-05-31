@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HR Payroll System</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -53,8 +54,8 @@ body{
 
 /* CARD = MOBILE WIDTH */
 .card{
-  width:100%;
-  max-width:420px;   /* ده عرض موبايل مثالي */
+  width:calc(100vw - 15px);
+  max-width:none;   /* ده عرض موبايل مثالي */
   margin:auto;
   background:#fff;
   border-radius:16px;
