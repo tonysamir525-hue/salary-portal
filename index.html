@@ -2,7 +2,6 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HR Payroll System</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -16,17 +15,16 @@ body{
 }
 
 .container{
-  max-width:100%;
+  max-width:900px;
   margin:auto;
-  padding:10px;
 }
 
 /* ================= SEARCH DROPDOWN ================= */
 .filters{
-  flex-direction:column;
-  align-items:center;
+  display:flex;
+  gap:10px;
+  margin-bottom:15px;
 }
-
 
 
 .dropdown{
@@ -52,7 +50,7 @@ body{
   background:#f3f4f6;
 }
 
-/* CARD = MOBILE WIDTH */
+/* ================= CARD ================= */
 .card{
   width:10cm;
   margin:auto;
@@ -78,8 +76,7 @@ body{
 
 .btn-box{
   position:relative;
-  width:100%;
-  max-width:420px;
+  width:200px;
 }
 
 .big-btn{
@@ -123,28 +120,26 @@ body{
   font-weight:900;
 }
 
-/* ROW = VERTICAL STYLE (مش أفقي قوي) */
+/* ================= ROW ================= */
 .row{
   display:flex;
-  flex-direction:column;   /* مهم جدًا */
-  align-items:flex-start;
-  gap:4px;
-  padding:10px 0;
+  justify-content:space-between;
+  align-items:center;
+  padding:6px 0;
   border-bottom:1px solid #f1f1f1;
 }
-/* LABEL */
+
 .label{
   color:#000;
-  font-weight:700;
-  font-size:14px;
+  font-weight:800;
+  font-size:20px;
 }
 
-
-/* VALUE */
 .value{
   color:#000;
-  font-weight:900;
-  font-size:16px;
+  text-align: center;
+  font-weight:800;
+  font-size:20px;
 }
 
 /* ================= NET ================= */
@@ -161,14 +156,10 @@ body{
 /* ================= ACTIONS ================= */
 .actions{
   display:flex;
-  flex-direction:column;
   gap:10px;
   margin-top:15px;
-  max-width:420px;
-  margin-left:auto;
-  margin-right:auto;
 }
-  
+
 button{
   flex:1;
   padding:10px;
@@ -180,7 +171,7 @@ button{
   cursor:pointer;
 }
 
-</style>
+}</style>
 </head>
 
 <body>
