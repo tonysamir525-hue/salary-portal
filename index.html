@@ -210,21 +210,20 @@ display:none;
 let employees=[];
 let currentEmployee=null;
 
-fetch(https://script.google.com/macros/s/AKfycbxdGxOn1CpsqwQuXQJ8OzIsU-2ewJx9XEE4VL1KSFeUN7gHXs5Dr8XUleZPRxV8sbef/exec)
-.then(r=>r.arrayBuffer())
-.then(data=>{
+fetch("https://script.google.com/macros/s/AKfycbxdGxOn1CpsqwQuXQJ8OzIsU-2ewJx9XEE4VL1KSFeUN7gHXs5Dr8XUleZPRxV8sbef/exec")
+.then(r => r.json())
+.then(data => {
 
-const workbook=XLSX.read(data);
+    console.log(data);
 
-const sheet=
-workbook.Sheets[
-workbook.SheetNames[0]
-];
+    employees = data;
 
-employees=
-XLSX.utils.sheet_to_json(sheet);
+    loadBranches();
 
-loadBranches();
+})
+.catch(err => {
+
+    console.error(err);
 
 });
 
