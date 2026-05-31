@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>كشف المرتبات</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
+}
+
+body{
+background:#f5f7fb;
+}
+
+.header{
+background:linear-gradient(135deg,#1d4ed8,#2563eb);
+color:white;
+padding:25px;
+text-align:center;
+font-size:28px;
+font-weight:700;
+}
+
+.container{
+max-width:1300px;
+margin:auto;
+padding:20px;
+}
+
+.filters{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
+
+select{
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+min-width:250px;
+font-size:15px;
+background:white;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 3px 15px rgba(0,0,0,.08);
+}
+
+.card-title{
+font-size:14px;
+color:#666;
+}
+
+.card-value{
+font-size:28px;
+font-weight:700;
+margin-top:10px;
+}
+
+.green{
+color:#059669;
+}
+
+.blue{
+color:#2563eb;
+}
+
+.orange{
+color:#ea580c;
+}
+
+.table-box{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 3px 15px rgba(0,0,0,.08);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:12px;
+border:1px solid #eee;
+text-align:center;
+}
+
+th{
+background:#f8fafc;
+}
+
+.actions{
+margin-top:20px;
+}
+
+button{
+background:#2563eb;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:10px;
+cursor:pointer;
+font-size:15px;
+}
+
+button:hover{
+opacity:.9;
+}
+
+#dashboard{
+display:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+كشف مرتبات الموظفين
+</div>
+
+<div class="container">
+
+<div class="filters">
+
+<select id="branch">
+<option>اختر الفرع</option>
+</select>
+
+<select id="employee">
+<option>اختر الموظف</option>
+</select>
+
+</div>
+
+<div id="dashboard">
+
+<div class="cards">
+
+<div class="card">
+<div class="card-title">المرتب</div>
+<div class="card-value blue" id="salary"></div>
+</div>
+
+<div class="card">
+<div class="card-title">صافي المرتب</div>
+<div class="card-value green" id="netSalary"></div>
+</div>
+
+<div class="card">
+<div class="card-title">الحافز</div>
+<div class="card-value orange" id="bonus"></div>
+</div>
+
+<div class="card">
+<div class="card-title">الإجمالي</div>
+<div class="card-value blue" id="total"></div>
+</div>
+
+</div>
+
+<div class="table-box">
+
+<table>
+<tbody id="details"></tbody>
+</table>
+
+<div class="actions">
+<button onclick="exportPDF()">
+📄 تحميل PDF
+</button>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let employees=[];
+let currentEmployee=null;
+
+fetch(https://script.google.com/macros/s/AKfycbxdGxOn1CpsqwQuXQJ8OzIsU-2ewJx9XEE4VL1KSFeUN7gHXs5Dr8XUleZPRxV8sbef/exec)
+.then(r=>r.arrayBuffer())
+.then(data=>{
+
+const workbook=XLSX.read(data);
+
+const sheet=
+workbook.Sheets[
+workbook.SheetNames[0]
+];
+
+employees=
+XLSX.utils.sheet_to_json(sheet);
+
+loadBranches();
+
+});
+
+function loadBranches(){
+
+const branches=[
+...new Set(
+employees.map(x=>x["الفرع"])
+)
+];
+
+const select=
+document.getElementById("branch");
+
+branches.forEach(branch=>{
+
+const op=
+document.createElement("option");
+
+op.value=branch;
+op.textContent=branch;
+
+select.appendChild(op);
+
+});
+
+}
+
+document.getElementById("branch")
+.addEventListener("change",function(){
+
+const branch=this.value;
+
+const empSelect=
+document.getElementById("employee");
+
+empSelect.innerHTML=
+'<option>اختر الموظف</option>';
+
+employees
+.filter(x=>x["الفرع"]===branch)
+.forEach(emp=>{
+
+empSelect.innerHTML+=
+`<option>${emp["الموظف"]}</option>`;
+
+});
+
+});
+
+document.getElementById("employee")
+.addEventListener("change",function(){
+
+const empName=this.value;
+
+currentEmployee=
+employees.find(x=>
+x["الموظف"]===empName &&
+x["الفرع"]===
+document.getElementById("branch").value
+);
+
+showEmployee();
+
+});
+
+function showEmployee(){
+
+if(!currentEmployee) return;
+
+document.getElementById("dashboard")
+.style.display="block";
+
+document.getElementById("salary")
+.innerText=currentEmployee["المرتب"] ?? 0;
+
+document.getElementById("netSalary")
+.innerText=currentEmployee["صافى المرتب"] ?? 0;
+
+document.getElementById("bonus")
+.innerText=currentEmployee["حافز"] ?? 0;
+
+document.getElementById("total")
+.innerText=currentEmployee["الاجمالى"] ?? 0;
+
+let html='';
+
+Object.entries(currentEmployee)
+.forEach(([key,val])=>{
+
+html+=`
+<tr>
+<td><b>${key}</b></td>
+<td>${val}</td>
+</tr>
+`;
+
+});
+
+document.getElementById("details")
+.innerHTML=html;
+
+}
+
+async function exportPDF(){
+
+if(!currentEmployee) return;
+
+const { jsPDF } = window.jspdf;
+
+const pdf=new jsPDF();
+
+pdf.setFontSize(18);
+pdf.text("Salary Report",20,20);
+
+let y=40;
+
+for(const [k,v] of Object.entries(currentEmployee)){
+
+pdf.setFontSize(11);
+pdf.text(`${k} : ${v}`,20,y);
+
+y+=8;
+
+if(y>270){
+pdf.addPage();
+y=20;
+}
+
+}
+
+pdf.save(
+`${currentEmployee["الموظف"]}.pdf`
+);
+
+}
+
+</script>
+
+</body>
+</html>
